@@ -10,9 +10,15 @@ func walk(t *tree.Tree, ch chan int) {
 		return
 	}
 
-	walk(t.Left, ch)
+	if t.Left != nil {
+		walk(t.Left, ch)
+	}
+
 	ch <- t.Value
-	walk(t.Right, ch)
+
+	if t.Right != nil {
+		walk(t.Right, ch)
+	}
 }
 
 // Walk walks the tree t sending all values
@@ -29,9 +35,9 @@ func Same(t1, t2 *tree.Tree) bool {
 	ch2 := make(chan int)
 	go Walk(t1, ch1)
 	go Walk(t2, ch2)
-	for v1 := range ch1 {
-		v2 := <-ch2
-		if v1 != v2 {
+
+	for v := range ch1 {
+		if v != <-ch2 {
 			return false
 		}
 	}
